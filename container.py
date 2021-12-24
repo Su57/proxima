@@ -1,6 +1,5 @@
-from redis import StrictRedis
 from dependency_injector.containers import DeclarativeContainer, WiringConfiguration
-from dependency_injector.providers import ThreadLocalSingleton, Resource, Factory, Dependency, Provider
+from dependency_injector.providers import ThreadLocalSingleton, Resource, Factory, Dependency
 
 from settings import settings
 from src.core.redis import get_redis
@@ -16,7 +15,7 @@ class Container(DeclarativeContainer):
 
     wiring_config = WiringConfiguration(packages=["src"])
 
-    redis: Resource[StrictRedis] = Resource(
+    redis = Resource(
         get_redis,
         dsn=settings.REDIS_DSN,
         max_connections=settings.REDIS_MAX_CONNECTIONS
@@ -32,7 +31,7 @@ class Container(DeclarativeContainer):
         factory=session_factory
     )
 
-    auth_service: Provider[AuthService] = Dependency(
+    auth_service = Dependency(
         instance_of=AuthService,
         default=Factory(
             AuthServiceImpl,
@@ -44,7 +43,7 @@ class Container(DeclarativeContainer):
         )
     )
 
-    file_service: Provider[FileService] = Dependency(
+    file_service = Dependency(
         instance_of=FileService,
         default=Factory(
             LocalFileService,
@@ -55,7 +54,7 @@ class Container(DeclarativeContainer):
         )
     )
 
-    user_service: Provider[UserService] = Dependency(
+    user_service = Dependency(
         instance_of=UserService,
         default=Factory(
             UserServiceImpl,
@@ -66,7 +65,7 @@ class Container(DeclarativeContainer):
         )
     )
 
-    role_service: Provider[RoleService] = Dependency(
+    role_service = Dependency(
         instance_of=RoleService,
         default=Factory(
             RoleServiceImpl,
@@ -77,7 +76,7 @@ class Container(DeclarativeContainer):
         )
     )
 
-    authority_service: Provider[AuthorityService] = Dependency(
+    authority_service = Dependency(
         instance_of=AuthorityService,
         default=Factory(
             AuthorityServiceImpl,

@@ -1,7 +1,6 @@
 from flask import Flask, Blueprint
 from pydantic import ValidationError
 
-from logger import logger
 from settings import settings
 from container import Container
 from src.exceptions import ProximaException
@@ -24,7 +23,6 @@ def create_app() -> Flask:
 def _register_container(app: Flask) -> None:
     """ 注册容器 """
     container = Container()
-    # container.wire(packages=["src"])
     container.init_resources()
     app.container = container
 
@@ -43,7 +41,6 @@ def _register_error_handler(app: Flask) -> None:
 
     @app.errorhandler(Exception)
     def handler(exc) -> ProximaException:
-        logger.error(str(exc))
         if isinstance(exc, ProximaException):
             return exc
         elif isinstance(exc, ValidationError):
@@ -52,7 +49,8 @@ def _register_error_handler(app: Flask) -> None:
             return ProximaException(error_code=2, code=400, description=str(exc))
 
 
-app = create_app()
+application = create_app()
+
 
 if __name__ == '__main__':
-    app.run(port=5000, host="0.0.0.0", debug=True)
+    application.run(port=5000, host="0.0.0.0", debug=True)

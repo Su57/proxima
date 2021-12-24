@@ -13,12 +13,12 @@ logger.add(
     sink=os.path.join(_log_dir, "debug.log"),
     level="DEBUG",
     encoding=Constant.UTF8,
-    rotation="1 MB"
+    rotation="100 MB"
 )
 
 logger.add(
     sink=os.path.join(_log_dir, "error.log"),
     level="ERROR",
     encoding=Constant.UTF8,
-    rotation="1 MB"
+    rotation="100 MB"
 )

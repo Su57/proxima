@@ -40,7 +40,7 @@ class IService(ABC):
         """
         根据主键获取数据库对象
         :param idents: 主键序列
-        :return: orm映射对象
+        :return: orm映射对象列表
         """
         raise NotImplemented
 
@@ -49,7 +49,7 @@ class IService(ABC):
         """
         根据主键获取数据库对象
         :param params: 查询条件，应用于SQL WHERE语句
-        :return: orm映射对象的集合
+        :return: orm映射对象列表
         """
         raise NotImplemented
 
@@ -69,7 +69,7 @@ class IService(ABC):
         更新对象
         :param ident: 待更新对象主键值
         :param schema: 更新时提交的数据
-        :return: 更新的条数
+        :return:
         """
         raise NotImplemented
 
@@ -78,7 +78,7 @@ class IService(ABC):
         """
         根据主键删除对象
         :param ident: 主键值
-        :return: 删除行数
+        :return:
         """
         raise NotImplemented
 
@@ -87,7 +87,7 @@ class IService(ABC):
         """
         批量保存
         :param mappings: 待保存的对象
-        :return: 保存条目
+        :return:
         """
         raise NotImplemented
 
@@ -96,7 +96,7 @@ class IService(ABC):
         """
         批量更新
         :param mappings: 待更新列表。每个元素都必须包含id键，为了让sqlalchemy可以更具id进行属性更新
-        :return: 更新条数
+        :return:
         """
         raise NotImplemented
 
@@ -105,7 +105,7 @@ class IService(ABC):
         """
         批量删除
         :param idents: 待删除对象主键序列
-        :return: 删除条目数
+        :return:
         """
         raise NotImplemented
 
@@ -117,7 +117,6 @@ class ServiceImpl(Generic[M, T], ABC):
 
     def save(self, entity: Union[T, DataSchema]) -> None:
         """
-        新增数据。可能因为数据库锁机制等原因保存失败，需要进行重试
 
         :param entity: 新增时提交的数据
         :return:
@@ -133,16 +132,16 @@ class ServiceImpl(Generic[M, T], ABC):
         """
         return self.repository.get_by_id(ident)
 
-    def get_by_ids(self, ident_list: Sequence[int]) -> Sequence[T]:
+    def get_by_ids(self, ident_list: Sequence[int]) -> List[T]:
         """
         根据主键获取数据库对象
         
         :param ident_list: 主键序列
-        :return: orm映射对象
+        :return: orm映射对象列表
         """
         return self.repository.get_by_ids(ident_list)
 
-    def get_by_map(self, params: Dict[str, int] = None) -> Sequence[T]:
+    def get_by_map(self, params: Dict[str, int] = None) -> List[T]:
         """
         根据主键获取数据库对象
         
@@ -168,7 +167,7 @@ class ServiceImpl(Generic[M, T], ABC):
 
         :param ident: 待更新对象主键值
         :param schema: 更新时提交的数据
-        :return: 更新的条数
+        :return:
         """
         self.repository.update(ident, schema)
 
@@ -176,7 +175,7 @@ class ServiceImpl(Generic[M, T], ABC):
         """
         根据主键删除对象
         :param ident: 主键值
-        :return: 删除行数
+        :return:
         """
         self.repository.delete(ident)
 
@@ -184,7 +183,7 @@ class ServiceImpl(Generic[M, T], ABC):
         """
         批量保存
         :param mappings: 待保存的对象
-        :return: 保存条目
+        :return:
         """
         self.repository.batch_insert(mappings)
 
@@ -192,7 +191,7 @@ class ServiceImpl(Generic[M, T], ABC):
         """
         批量更新
         :param mappings: 待更新列表。每个元素都必须包含id键，为了让sqlalchemy可以更具id进行属性更新
-        :return: 更新条数
+        :return:
         """
         self.repository.batch_update(mappings)
 

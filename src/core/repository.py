@@ -48,7 +48,7 @@ class Repository(Generic[T]):
         with self.session_context as session:
             return session.get(self.entity_class, ident=ident)
 
-    def get_by_ids(self, ident_list: Sequence[int]) -> Sequence[T]:
+    def get_by_ids(self, ident_list: Sequence[int]) -> List[T]:
         """
         根据主键获取数据库对象
 
@@ -60,7 +60,7 @@ class Repository(Generic[T]):
             result: Result = session.execute(stmt)
             return result.scalars().all()
 
-    def get_by_map(self, params: Dict[str, Any] = None) -> Sequence[T]:
+    def get_by_map(self, params: Dict[str, Any] = None) -> List[T]:
         """
         根据主键获取数据库对象
 
@@ -94,17 +94,14 @@ class Repository(Generic[T]):
 
     def update(self, ident: int, schema: DataSchema) -> None:
         """
-        更新对象 不要使用SQLAlchemy ORM更新策略(查询对象 -> 修改对象字段 -> 提交变更)
-        可以直接采取数据库UPDATE操作。可能失败，需要重试
+        根据主键更新对象
 
         :param ident: 待更新对象主键值
         :param schema: 更新时提交的数据
-        :return: 更新的条数
+        :return:
         """
         with self.session_context as session:
             update_data = schema.dict(exclude_unset=True)
-            # 使用sqlalchemy core进行直接更新, 详细请参考
-            # https://docs.sqlalchemy.org/en/14/tutorial/orm_data_manipulation.html#tutorial-orm-enabled-update
             stmt: Update = update(self.entity_class).where(self.entity_class.id == ident).values(**update_data)
             session.execute(stmt)
             session.commit()
@@ -113,7 +110,7 @@ class Repository(Generic[T]):
         """
         根据主键删除对象
         :param ident: 主键值
-        :return: 删除行数
+        :return:
         """
         with self.session_context as session:
             stmt: Delete = delete(self.entity_class).where(self.entity_class.id == ident)
@@ -124,7 +121,7 @@ class Repository(Generic[T]):
         """
         批量保存
         :param schemas: 待保存的对象
-        :return: 保存条目
+        :return:
         """
         with self.session_context as session:
             mappings = [schema.dict(exclude_none=True) for schema in schemas]
@@ -134,7 +131,7 @@ class Repository(Generic[T]):
         """
         批量更新
         :param schemas: 待更新列表。每个元素都必须包含id键，为了让sqlalchemy可以更具id进行属性更新
-        :return: 更新条数
+        :return:
         """
         with self.session_context as session:
             mappings = [schema.dict(exclude_unset=True) for schema in schemas]
@@ -145,10 +142,9 @@ class Repository(Generic[T]):
         """
         批量删除
         :param idents: 待删除对象主键序列
-        :return: 删除条目数
+        :return:
         """
         with self.session_context as session:
-            # 进行core的批量更新
             stmt: Delete = delete(self.entity_class).where(self.entity_class.id.in_(idents))
             session.execute(stmt)
             session.commit()
