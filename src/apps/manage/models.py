@@ -1,8 +1,8 @@
 from sqlalchemy import Table, Column, String, Integer, BigInteger, SmallInteger, ForeignKey, PrimaryKeyConstraint
 
 from src.utils import DateUtil
-from src.core.db.model import DeclarativeModel
 from src.common.enums import Status, Gender
+from src.core.db.model import DeclarativeModel
 
 
 # 用户-角色关系表

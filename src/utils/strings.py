@@ -1,7 +1,7 @@
 import re
+from dataclasses import dataclass
 from typing import Optional
 from uuid import uuid4, UUID
-from dataclasses import dataclass
 
 
 @dataclass

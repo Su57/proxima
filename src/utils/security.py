@@ -2,11 +2,11 @@
 # @Author        : Yao YuHang
 # @CreatedTime   : 2021/1/29 16:21
 # @Description   :
-from typing import Any, Dict
 from datetime import timedelta, datetime
+from typing import Any, Dict
 
-from jose.constants import ALGORITHMS
 from jose import jwt, ExpiredSignatureError, JWTError
+from jose.constants import ALGORITHMS
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from settings import settings

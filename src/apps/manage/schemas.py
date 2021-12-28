@@ -1,9 +1,10 @@
 from typing import Optional, List, Union
+
 from pydantic import Field, EmailStr, NonNegativeInt
 from pydantic_sqlalchemy import sqlalchemy_to_pydantic
 
-from src.common.enums import Gender, Status
 from src.apps.manage.models import User, Role, Authority
+from src.common.enums import Gender, Status
 from src.core.config.serializer import SerializationConfig, BaseSerializationSchema, BaseValidationSchema
 
 # 数据库模型 -> schema

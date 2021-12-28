@@ -1,4 +1,5 @@
 from flask import Blueprint
+
 from src.apps.common.routers.auth import bp as auth_bp
 from src.apps.common.routers.file import bp as file_bp
 

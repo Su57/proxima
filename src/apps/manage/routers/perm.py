@@ -1,14 +1,13 @@
 from typing import List, Dict, Any
 
-from flask import Blueprint, request
 from dependency_injector.wiring import inject, Provide
+from flask import Blueprint, request
 
 from container import Container
-from src.core.web.response import Response
 from src.apps.manage.models import Authority
-from src.apps.manage.services import AuthorityService
 from src.apps.manage.schemas import AuthorityViewSchema, AuthorityCreateSchema, AuthorityUpdateSchema
-
+from src.apps.manage.services import AuthorityService
+from src.core.web.response import Response
 
 bp = Blueprint("perm", __name__, url_prefix="/perm")
 

@@ -1,6 +1,6 @@
+from abc import ABC, abstractmethod
 from datetime import datetime
 from datetime import timedelta
-from abc import ABC, abstractmethod
 from typing import Set, Optional, Final
 
 from redis import Redis
@@ -8,13 +8,13 @@ from sqlalchemy.engine import Result
 from sqlalchemy.sql import select, distinct
 
 from settings import settings
+from src.apps.common.schemas import BearerToken
+from src.apps.manage.models import User, Authority, user_role, role_auth
+from src.apps.manage.repository import UserRepository
 from src.common.constant import Constant
 from src.core.web.schemas import CurrentUser
-from src.utils import StringUtil, SecurityUtil
-from src.apps.common.schemas import BearerToken
-from src.apps.manage.repository import UserRepository
 from src.exceptions import ProximaException, InvalidAccountException
-from src.apps.manage.models import User, Authority, user_role, role_auth
+from src.utils import StringUtil, SecurityUtil
 
 
 class AuthService(ABC):

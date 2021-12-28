@@ -1,13 +1,13 @@
 from abc import abstractmethod
 from typing import List, Optional
 
-from src.utils import SecurityUtil
-from src.core.web.schemas import Page
 from src.apps.manage.models import User
-from src.exceptions import ProximaException
 from src.apps.manage.repository import UserRepository
-from src.core.service import IService, ServiceImpl
 from src.apps.manage.schemas import UserCreateSchema, UserUpdateSchema, UserViewSchema
+from src.core.service import IService, ServiceImpl
+from src.core.web.schemas import Page
+from src.exceptions import ProximaException
+from src.utils import SecurityUtil
 
 
 class UserService(IService):
@@ -84,7 +84,7 @@ class UserServiceImpl(ServiceImpl[UserRepository, User], UserService):
         user.nickname = schema.nickname
         user.email = schema.email
         user.mobile = schema.mobile
-        user.avatar_id = schema.avatar_id
+        user.avatar = schema.avatar
         user.password = SecurityUtil.generate_password(schema.password)
         self.repository.add_user(user, schema.roles)
 

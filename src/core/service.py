@@ -3,9 +3,9 @@ from typing import List, Optional, Union, Generic, Dict, Sequence, TypeVar, Fina
 
 from pydantic import BaseModel
 
-from src.core.web.schemas import Page
-from src.core.repository import Repository
 from src.core.db.model import DeclarativeModel
+from src.core.repository import Repository
+from src.core.web.schemas import Page
 
 M = TypeVar("M", bound=Repository)
 T = TypeVar("T", bound=DeclarativeModel)

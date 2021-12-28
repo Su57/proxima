@@ -1,11 +1,11 @@
 from flask import Flask, Blueprint
 from pydantic import ValidationError
 
-from settings import settings
 from container import Container
-from src.exceptions import ProximaException
-from src.apps.manage.routers import auth_bp
+from settings import settings
 from src.apps.common.routers import common_bp
+from src.apps.manage.routers import auth_bp
+from src.exceptions import ProximaException
 
 
 def create_app() -> Flask:

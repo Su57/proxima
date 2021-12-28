@@ -1,12 +1,12 @@
 from abc import abstractmethod
 from typing import List, MutableSequence, Dict, Any
 
-from src.utils import TreeUtil
+from src.apps.manage.models import Authority
+from src.apps.manage.repository import AuthorityRepository
+from src.core.service import IService, ServiceImpl
 from src.core.web.schemas import TreeSchema
 from src.exceptions import ProximaException
-from src.apps.manage.models import Authority
-from src.core.service import IService, ServiceImpl
-from src.apps.manage.repository import AuthorityRepository
+from src.utils import TreeUtil
 
 
 class AuthorityService(IService):

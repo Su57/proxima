@@ -1,15 +1,14 @@
-from flask import Blueprint, request
 from dependency_injector.wiring import inject, Provide
+from flask import Blueprint, request
 
-from src.utils import RequestUtil
-from src.apps.manage.models import Role
-from src.core.web.schemas import Page
-from src.common.constant import Constant
 from container import Container
-from src.core.web.response import Response
-from src.apps.manage.services.role import RoleService
+from src.apps.manage.models import Role
 from src.apps.manage.schemas import RoleCreateSchema, RoleUpdateSchema, RoleViewSchema
-
+from src.apps.manage.services.role import RoleService
+from src.common.constant import Constant
+from src.core.web.response import Response
+from src.core.web.schemas import Page
+from src.utils import RequestUtil
 
 bp = Blueprint("role", __name__, url_prefix="/role")
 

@@ -1,4 +1,4 @@
-from typing import Optional, List, Tuple, Dict, Any
+from typing import Optional, Dict, Any
 
 import orjson
 from werkzeug.exceptions import HTTPException
@@ -12,7 +12,7 @@ class ProximaException(HTTPException):
     code: int = 400
     error_code: int = ResCode.ERROR
 
-    def __init__(self, description=None, error_code: int = None, code: int = None, data=None, *args, **kwargs) -> None:
+    def __init__(self, description=None, error_code: int = None, code: int = None, data=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if description:
             self.description = description
@@ -22,7 +22,7 @@ class ProximaException(HTTPException):
             self.code = code
         self.data = data
 
-    def get_headers(self, environ: Optional[Dict[str, Any]] = None, scope: Optional[dict] = None) -> List[Tuple[str, str]]:
+    def get_headers(self, environ: Optional[Dict[str, Any]] = None, scope: Optional[dict] = None):
         """ 让异常对应的结果为JSON字符串而非默认的H5页面 """
         return [("Content-Type", "application/json")]
 

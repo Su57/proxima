@@ -1,10 +1,10 @@
 from abc import abstractmethod
 
 from src.apps.manage.models import Role
-from src.exceptions import ProximaException
-from src.core.service import IService, ServiceImpl
 from src.apps.manage.repository import RoleRepository
 from src.apps.manage.schemas import RoleCreateSchema, RoleUpdateSchema
+from src.core.service import IService, ServiceImpl
+from src.exceptions import ProximaException
 
 
 class RoleService(IService):

@@ -1,7 +1,7 @@
 from typing import MutableSequence, List, Dict, Any
 
-from src.exceptions import ProximaException
 from src.core.web.schemas import TreeSchema
+from src.exceptions import ProximaException
 
 
 class TreeUtil:

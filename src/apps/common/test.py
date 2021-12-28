@@ -3,20 +3,21 @@ from unittest.mock import Mock, MagicMock, patch
 
 from settings import settings
 from src.apps.common.models import File
-from src.apps.manage.models import User
 from src.apps.common.repository import FileRepository
-from src.apps.manage.repository import UserRepository
-from src.core.db.session import SessionFactory, Session
 from src.apps.common.services.auth import AuthServiceImpl
-from src.exceptions import ProximaException, InvalidAccountException
 from src.apps.common.services.file import LocalFileService, FileStorage
+from src.apps.manage.models import User
+from src.apps.manage.repository import UserRepository
+from src.core.db.session import SessionFactory, Session, SessionContext
+from src.exceptions import ProximaException, InvalidAccountException
 
 
 class FileRepositoryTestCase(TestCase):
 
     def setUp(self) -> None:
         session_factory = SessionFactory(settings.SQLALCHEMY_DATABASE_URI)
-        self.repository = FileRepository(session_factory=session_factory)
+        session_context = SessionContext(factory=session_factory)
+        self.repository = FileRepository(session_context=session_context)
 
     @patch.object(Session, "commit")
     @patch.object(Session, "add")
@@ -28,10 +29,10 @@ class FileRepositoryTestCase(TestCase):
         """
         file: File = File()
         file.id = 1
-        res: int = self.repository.save(file)
+        self.repository.save(file)
         mock_add.assert_called_once_with(file)
         mock_commit.assert_called_once()
-        self.assertEqual(res, 1)
+        self.assertEqual(file.id, 1)
 
 
 class LocalFileServiceTestCase(TestCase):
@@ -103,7 +104,7 @@ class AuthServiceTestCase(TestCase):
 
         # 用户不可用时会抛出异常
         user.status = 1
-        self.assertRaises(InvalidAccountException, service.authenticate, email, 'some_password')
+        self.assertRaises(InvalidAccountException, service.authenticate, email, '123456')
 
         # 没有该用户时抛出异常
         repository.get_user_by_email.return_value = None

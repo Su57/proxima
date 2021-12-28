@@ -1,11 +1,11 @@
 from typing import Optional, Sequence, Dict, List, Final
 
+from sqlalchemy import insert, or_, delete, update
 from sqlalchemy import select, func
 from sqlalchemy.engine import Result
-from sqlalchemy import insert, or_, delete, update
 
-from src.core.repository import Repository
 from src.apps.manage.models import User, Role, Authority, user_role, role_auth
+from src.core.repository import Repository
 
 
 class UserRepository(Repository[User]):

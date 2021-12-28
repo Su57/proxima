@@ -5,9 +5,9 @@ from pydantic import BaseModel
 from sqlalchemy.engine.cursor import Result
 from sqlalchemy.sql import update, Update, delete, Delete, insert, Insert, select, Select, func
 
-from src.core.web.schemas import Page
 from src.core.db.model import DeclarativeModel
 from src.core.db.session import SessionContext
+from src.core.web.schemas import Page
 
 T = TypeVar("T", bound=DeclarativeModel)
 DataSchema = TypeVar("DataSchema", bound=BaseModel)

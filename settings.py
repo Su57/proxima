@@ -7,9 +7,9 @@ from pydantic import BaseSettings, validator, RedisDsn
 class Settings(BaseSettings):
     """用于项目自定义配置"""
 
-    DEBUG: bool
     SECRET_KEY: str
-    MAX_CONTENT_LENGTH: int = 5 * 1024 * 1024 * 1024
+    # 最大支持5M文件上传
+    MAX_CONTENT_LENGTH: int = 5 * 1024 * 1024
 
     BASE_DIR: str = os.path.dirname(__file__)
     UPLOAD_DIR: str = "static/upload/"

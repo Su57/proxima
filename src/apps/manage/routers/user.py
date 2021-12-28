@@ -1,16 +1,15 @@
-from flask import Blueprint, request
 from dependency_injector.wiring import inject, Provide
+from flask import Blueprint, request
 
-from src.apps.manage.models import User
-
-from src.utils import RequestUtil
-from src.core.web.schemas import Page
-from src.common.constant import Constant
 from container import Container
-from src.core.web.response import Response
-# from src.core.security import login_required
-from src.apps.manage.services import UserService
+from src.apps.manage.models import User
 from src.apps.manage.schemas import UserCreateSchema, UserUpdateSchema, UserViewSchema
+from src.apps.manage.services import UserService
+from src.common.constant import Constant
+# from src.core.security import login_required
+from src.core.web.response import Response
+from src.core.web.schemas import Page
+from src.utils import RequestUtil
 
 bp = Blueprint("user", __name__, url_prefix="/user")
 

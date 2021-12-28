@@ -4,19 +4,20 @@
 # @Description   :
 import pathlib
 from os import PathLike
-from urllib.parse import urljoin
 from typing import List, Optional
+from urllib.parse import urljoin
 
-from flask import Blueprint, request, send_file
 from dependency_injector.wiring import inject, Provide
+from flask import Blueprint, request, send_file
 
-from settings import settings
 from container import Container
+from settings import settings
 from src.apps.common.models import File
-from src.core.web.response import Response
-from src.core.security import login_required
-from src.apps.common.services import FileService
 from src.apps.common.schemas import FileViewSchema
+from src.apps.common.services import FileService
+from src.core.security import login_required
+from src.core.web.response import Response
+
 bp = Blueprint("file", __name__, url_prefix="/file")
 
 

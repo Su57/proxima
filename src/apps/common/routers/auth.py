@@ -1,10 +1,10 @@
-from flask import Blueprint, request
 from dependency_injector.wiring import inject, Provide
+from flask import Blueprint, request
 
 from container import Container
-from src.core.web.response import Response
-from src.apps.common.services.auth import AuthService
 from src.apps.common.schemas import BearerToken, LoginSchema
+from src.apps.common.services.auth import AuthService
+from src.core.web.response import Response
 
 bp: Blueprint = Blueprint("auth", __name__)
 

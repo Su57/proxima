@@ -2,12 +2,12 @@ from dependency_injector.containers import DeclarativeContainer, WiringConfigura
 from dependency_injector.providers import ThreadLocalSingleton, Resource, Factory, Dependency
 
 from settings import settings
-from src.core.redis import get_redis
-from src.apps.common.services import *
-from src.apps.manage.services import *
 from src.apps.common.repository import *
+from src.apps.common.services import *
 from src.apps.manage.repository import *
+from src.apps.manage.services import *
 from src.core.db.session import SessionFactory, SessionContext
+from src.core.redis import get_redis
 
 
 class Container(DeclarativeContainer):
