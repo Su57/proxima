@@ -1,5 +1,5 @@
 from dependency_injector.containers import DeclarativeContainer, WiringConfiguration
-from dependency_injector.providers import ThreadLocalSingleton, Resource, Factory, Dependency
+from dependency_injector.providers import ThreadSafeSingleton, Resource, Factory, Dependency
 
 from settings import settings
 from src.apps.common.repository import *
@@ -21,7 +21,7 @@ class Container(DeclarativeContainer):
         max_connections=settings.REDIS_MAX_CONNECTIONS
     )
 
-    session_factory = ThreadLocalSingleton(
+    session_factory = ThreadSafeSingleton(
         SessionFactory,
         dsn=settings.SQLALCHEMY_DATABASE_URI
     )

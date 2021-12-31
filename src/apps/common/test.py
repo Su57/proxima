@@ -1,37 +1,34 @@
 from unittest import TestCase, main
 from unittest.mock import Mock, MagicMock, patch
 
-from settings import settings
 from src.apps.common.models import File
 from src.apps.common.repository import FileRepository
 from src.apps.common.services.auth import AuthServiceImpl
 from src.apps.common.services.file import LocalFileService, FileStorage
 from src.apps.manage.models import User
 from src.apps.manage.repository import UserRepository
-from src.core.db.session import SessionFactory, Session, SessionContext
 from src.exceptions import ProximaException, InvalidAccountException
 
 
 class FileRepositoryTestCase(TestCase):
 
     def setUp(self) -> None:
-        session_factory = SessionFactory(settings.SQLALCHEMY_DATABASE_URI)
-        session_context = SessionContext(factory=session_factory)
-        self.repository = FileRepository(session_context=session_context)
+        self.session = Mock()
+        self.session_context = Mock(__enter__=Mock(), __exit__=Mock())
+        self.session_context.__enter__.return_value = self.session
 
-    @patch.object(Session, "commit")
-    @patch.object(Session, "add")
-    def test_save(self, mock_add: MagicMock, mock_commit: MagicMock):
+    def test_save(self):
         """
         测试 repository的保存功能
          - 测试是否成功调用了session的add和commit方法
          - 测试返回值是否和被保存对象的id一致
         """
-        file: File = File()
+        repository = FileRepository(session_context=self.session_context)
+        file = File()
         file.id = 1
-        self.repository.save(file)
-        mock_add.assert_called_once_with(file)
-        mock_commit.assert_called_once()
+        repository.save(file)
+        self.session.add.assert_called_once_with(file)
+        self.session.commit.assert_called_once()
         self.assertEqual(file.id, 1)
 
 

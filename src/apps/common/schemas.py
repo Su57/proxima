@@ -19,6 +19,7 @@ class LoginSchema(BaseValidationSchema):
 class BearerToken(BaseSerializationSchema):
     access_token: str
     token_type: str
+    expired_at: int
 
 
 @dataclass

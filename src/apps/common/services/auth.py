@@ -12,6 +12,7 @@ from src.apps.common.schemas import BearerToken
 from src.apps.manage.models import User, Authority, user_role, role_auth
 from src.apps.manage.repository import UserRepository
 from src.common.constant import Constant
+from src.utils import DateUtil
 from src.core.web.schemas import CurrentUser
 from src.exceptions import ProximaException, InvalidAccountException
 from src.utils import StringUtil, SecurityUtil
@@ -66,4 +67,5 @@ class AuthServiceImpl(AuthService):
         expire: timedelta = timedelta(minutes=settings.TOKEN_EXPIRED_MINUTES)
         self.redis.set(name=Constant.AUTH_REDIS_KEY + uid, value=current_user.json(), ex=expire)
         token: str = SecurityUtil.create_token(subject=uid)
-        return BearerToken(access_token=token, token_type=Constant.TOKEN_SCHEMA)
+        expired_at: int = DateUtil.timestamp() + expire.seconds
+        return BearerToken(access_token=token, token_type=Constant.TOKEN_SCHEMA, expired_at=expired_at)
