@@ -1,6 +1,6 @@
 from unittest import TestCase, main
-from unittest.mock import Mock, MagicMock, patch
-
+from unittest.mock import Mock, MagicMock, patch, ANY
+from src.core.db.session import SessionContext
 from src.apps.common.models import File
 from src.apps.common.repository import FileRepository
 from src.apps.common.services.auth import AuthServiceImpl
@@ -12,23 +12,22 @@ from src.exceptions import ProximaException, InvalidAccountException
 
 class FileRepositoryTestCase(TestCase):
 
-    def setUp(self) -> None:
-        self.session = Mock()
-        self.session_context = Mock(__enter__=Mock(), __exit__=Mock())
-        self.session_context.__enter__.return_value = self.session
-
     def test_save(self):
         """
         测试 repository的保存功能
          - 测试是否成功调用了session的add和commit方法
          - 测试返回值是否和被保存对象的id一致
         """
-        repository = FileRepository(session_context=self.session_context)
+        session = Mock()
+        session_context = Mock(spec=SessionContext, __enter__=Mock(), __exit__=Mock())
+        session_context.__enter__.return_value = session
+        repository = FileRepository(session_context=session_context)
         file = File()
         file.id = 1
         repository.save(file)
-        self.session.add.assert_called_once_with(file)
-        self.session.commit.assert_called_once()
+        session.add.assert_called_once_with(file)
+        session.commit.assert_called_once()
+
         self.assertEqual(file.id, 1)
 
 
@@ -105,7 +104,7 @@ class AuthServiceTestCase(TestCase):
 
         # 没有该用户时抛出异常
         repository.get_user_by_email.return_value = None
-        self.assertRaises(ProximaException, service.authenticate, 'not_really_exists_email', 'some_password')
+        self.assertRaises(ProximaException, service.authenticate, 'not_really_exists_email', ANY)
 
 
 if __name__ == '__main__':

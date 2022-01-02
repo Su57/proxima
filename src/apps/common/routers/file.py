@@ -24,7 +24,7 @@ bp = Blueprint("file", __name__, url_prefix="/file")
 @bp.post("/upload")
 @login_required
 @inject
-def upload(service: FileService = Provide[Container.file_service]):
+def upload(service: FileService = Provide[Container.file_service]) -> Response[List[FileViewSchema]]:
     """
     上传文件 WARNING: 只有使用本地文件服务时，才可以使用此接口
     """

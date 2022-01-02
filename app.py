@@ -53,7 +53,8 @@ application = create_app()
 
 
 if __name__ == '__main__':
-    from werkzeug.middleware.profiler import ProfilerMiddleware
+    # 如果需要进行接口性能剖析，请放开如下注释
+    # from werkzeug.middleware.profiler import ProfilerMiddleware
 
-    application.wsgi_app = ProfilerMiddleware(application.wsgi_app)
+    # application.wsgi_app = ProfilerMiddleware(application.wsgi_app)
     application.run(port=5000, host="0.0.0.0", debug=True)

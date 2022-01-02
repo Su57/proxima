@@ -2,7 +2,9 @@ from math import ceil
 from typing import List, Optional, Union, Generic, Dict, Sequence, TypeVar, Any, Final
 
 from pydantic import BaseModel
-from sqlalchemy.engine.cursor import Result
+from sqlalchemy import inspect
+from sqlalchemy.engine.result import Row
+from sqlalchemy.engine.cursor import Result, CursorResult
 from sqlalchemy.sql import update, Update, delete, Delete, insert, Insert, select, Select, func
 
 from src.core.db.model import DeclarativeModel
@@ -23,20 +25,29 @@ class Repository(Generic[T]):
         with self.session_context as session:
             return session.execute(stmt)
 
-    def save(self, entity: Union[T, DataSchema]) -> None:
+    def save(self, entity: Union[T, DataSchema]) -> Union[Dict[str, int], int]:
         """
         新增数据
 
         :param entity: 新增时提交的数据
-        :return:  
+        :return: 新增记录的主键值。若单一主键，则返回int，否则返回联合主键的 {字段名: 字段值}字典列表
         """
         with self.session_context as session:
             if isinstance(entity, DeclarativeModel):
                 session.add(entity)
+                session.commit()
+                # 获取主键字段
+                primary_key_fields = inspect(self.entity_class).primary_key
+                # 根据主键字段名获取主键字段值
+                res = [{f.name: getattr(entity, f.name)} for f in primary_key_fields]
+                return res if len(res) > 1 else res[0]
             else:
-                stmt: Insert = insert(self.entity_class).values(**entity.dict(exclude_none=True))
-                session.execute(stmt)
-            session.commit()
+                data = entity.dict(exclude_none=True)
+                stmt: Insert = insert(self.entity_class).values(**data)
+                insert_result: CursorResult = session.execute(stmt)
+                session.commit()
+                result: Row = insert_result.inserted_primary_key
+                return [{f.name: getattr(result, f.name)} for f in result.keys()] if len(result) > 1 else result[0]
 
     def get_by_id(self, ident: int) -> Optional[T]:
         """

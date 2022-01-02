@@ -15,31 +15,18 @@ class Container(DeclarativeContainer):
 
     wiring_config = WiringConfiguration(packages=["src"])
 
-    redis = Resource(
-        get_redis,
-        dsn=settings.REDIS_DSN,
-        max_connections=settings.REDIS_MAX_CONNECTIONS
-    )
+    redis = Resource(get_redis, dsn=settings.REDIS_DSN, max_connections=settings.REDIS_MAX_CONNECTIONS)
 
-    session_factory = ThreadSafeSingleton(
-        SessionFactory,
-        dsn=settings.SQLALCHEMY_DATABASE_URI
-    )
+    session_factory = ThreadSafeSingleton(SessionFactory, dsn=settings.SQLALCHEMY_DATABASE_URI)
 
-    session_context = Factory(
-        SessionContext,
-        factory=session_factory
-    )
+    session_context = Factory(SessionContext, factory=session_factory)
 
     auth_service = Dependency(
         instance_of=AuthService,
         default=Factory(
             AuthServiceImpl,
             redis=redis,
-            repository=Factory(
-                UserRepository,
-                session_context=session_context
-            )
+            repository=Factory(UserRepository, session_context=session_context)
         )
     )
 
@@ -47,10 +34,7 @@ class Container(DeclarativeContainer):
         instance_of=FileService,
         default=Factory(
             LocalFileService,
-            repository=Factory(
-                FileRepository,
-                session_context=session_context
-            )
+            repository=Factory(FileRepository, session_context=session_context)
         )
     )
 
@@ -58,10 +42,7 @@ class Container(DeclarativeContainer):
         instance_of=UserService,
         default=Factory(
             UserServiceImpl,
-            repository=Factory(
-                UserRepository,
-                session_context=session_context
-            )
+            repository=Factory(UserRepository, session_context=session_context)
         )
     )
 
@@ -69,10 +50,7 @@ class Container(DeclarativeContainer):
         instance_of=RoleService,
         default=Factory(
             RoleServiceImpl,
-            repository=Factory(
-                RoleRepository,
-                session_context=session_factory
-            )
+            repository=Factory(RoleRepository, session_context=session_factory)
         )
     )
 
@@ -80,9 +58,6 @@ class Container(DeclarativeContainer):
         instance_of=AuthorityService,
         default=Factory(
             AuthorityServiceImpl,
-            repository=Factory(
-                AuthorityRepository,
-                session_context=session_context
-            )
+            repository=Factory(AuthorityRepository, session_context=session_context)
         )
     )

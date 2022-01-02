@@ -17,7 +17,7 @@ from src.exceptions import UnAuthorizedException, TokenExpiredException
 
 
 @inject
-def _load_user_from_request(redis: Redis = Provide[Container.redis]) -> Optional[CurrentUser]:
+def load_user(redis: Redis = Provide[Container.redis]) -> Optional[CurrentUser]:
     """
     加载当前请求的用户
 
@@ -47,4 +47,4 @@ def _load_user_from_request(redis: Redis = Provide[Container.redis]) -> Optional
                 raise UnAuthorizedException
 
 
-current_user = LocalProxy(lambda: _load_user_from_request())
+current_user = LocalProxy(lambda: load_user())

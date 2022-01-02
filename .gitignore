@@ -149,4 +149,5 @@ cython_debug/
 logs/
 
 /alembic/versions/
-static
+static/
+poetry.lock

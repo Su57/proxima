@@ -4,7 +4,7 @@ from abc import abstractmethod
 from datetime import date
 
 from werkzeug.datastructures import FileStorage
-
+from pydantic_sqlalchemy import sqlalchemy_to_pydantic
 from settings import settings
 from src.apps.common.models import File
 from src.apps.common.repository import FileRepository
@@ -43,9 +43,9 @@ class LocalFileService(ServiceImpl[FileRepository, File], FileService):
             file.filename = file_storage.filename
             file.size = file_storage.content_length
             file.content_type = file_storage.content_type
-            self.repository.save(file)
+            file_id = self.repository.save(file)
             return FileViewSchema(
-                id=file.id,
+                id=file_id,
                 size=file_storage.content_length,
                 filename=file_storage.filename,
                 url=settings.UPLOAD_DIR + key
