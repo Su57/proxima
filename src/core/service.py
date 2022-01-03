@@ -18,11 +18,11 @@ class IService(ABC):
     """
 
     @abstractmethod
-    def save(self, entity: Union[T, DataSchema]) -> None:
+    def save(self, entity: Union[T, DataSchema]) -> Union[int, Dict[str, int]]:
         """
         新增数据
         :param entity: 新增时提交的数据
-        :return:
+        :return: 主键值
         """
         raise NotImplemented
 
@@ -115,7 +115,7 @@ class ServiceImpl(Generic[M, T], ABC):
     def __init__(self, repository: M):
         self.repository: Final[M] = repository
 
-    def save(self, entity: Union[T, DataSchema]) -> None:
+    def save(self, entity: Union[T, DataSchema]) -> Union[int, Dict[str, int]]:
         """
 
         :param entity: 新增时提交的数据

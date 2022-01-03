@@ -124,6 +124,7 @@ class Repository(Generic[T]):
         :return:
         """
         with self.session_context as session:
+
             stmt: Delete = delete(self.entity_class).where(self.entity_class.id == ident)
             session.execute(stmt)
             session.commit()
@@ -159,3 +160,13 @@ class Repository(Generic[T]):
             stmt: Delete = delete(self.entity_class).where(self.entity_class.id.in_(idents))
             session.execute(stmt)
             session.commit()
+
+    def get_primary_key_field(self) -> str:
+        """
+        获取主键字段
+        :return: 主键字段名
+        """
+        primary_key_field = inspect(self.entity_class).primary_key
+        return primary_key_field.name
+        # if len(primary_key_field) > 0:
+        #     raise

@@ -1,21 +1,21 @@
 [tool.poetry]
 name = "proxima"
 version = "0.1.0"
-description = ""
-authors = ["YaoYuHang <yaoyuhang@jorudan.com.cn>"]
+description = "Flask with DI"
+authors = ["YaoYuHang <yaoyuhangs@163.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
 flask = "^2.0.2"
 redis = "^4.1.0"
 dependency-injector = "^4.37.0"
-python-jose = {extras = ["cryptography"], version = "^3.3.0"}
-pydantic = {extras = ["email", "dotenv"], version = "^1.8.2"}
+python-jose = { extras = ["cryptography"], version = "^3.3.0" }
+pydantic = { extras = ["email", "dotenv"], version = "^1.8.2" }
 jinja2 = "^3.0.3"
 loguru = "^0.5.3"
 orjson = "^3.6.5"
 pydantic-sqlalchemy = "^0.0.9"
-sqlalchemy = {extras = ["pymysql"], version = "^1.4.29"}
+sqlalchemy = { extras = ["pymysql"], version = "^1.4.29" }
 alembic = "^1.7.5"
 gunicorn = "^20.1.0"
 
@@ -23,6 +23,7 @@ gunicorn = "^20.1.0"
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
 httpx = "^0.21.1"
+coverage = "^6.2"
 
 
 [build-system]

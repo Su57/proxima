@@ -9,7 +9,7 @@ class SessionFactory:
     """ Session工厂 """
 
     def __init__(self, dsn: str) -> None:
-        self._engine: Final[Engine] = create_engine(dsn, future=True, echo=True)
+        self._engine: Final[Engine] = create_engine(dsn, future=True, echo=False)
         self._scoped_session: Final[scoped_session] = scoped_session(
             sessionmaker(
                 class_=Session,

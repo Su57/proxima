@@ -58,7 +58,7 @@ def download(ident: int, service: FileService = Provide[Container.file_service])
     return send_file(file_path, as_attachment=True, attachment_filename=file.filename, mimetype=mimetype)
 
 
-@bp.delete("/download/<int:ident>")
+@bp.delete("/delete/<int:ident>")
 @login_required
 @inject
 def delete(ident: int, service: FileService = Provide[Container.file_service]):
@@ -69,4 +69,5 @@ def delete(ident: int, service: FileService = Provide[Container.file_service]):
     :param service:
     :return:
     """
-    return service.delete(ident)
+    service.delete(ident)
+    return Response.ok(msg="删除成功")
