@@ -9,7 +9,7 @@ from sqlalchemy.sql import select, distinct
 
 from settings import settings
 from src.apps.common.schemas import BearerToken
-from src.apps.manage.models import User, Authority, user_role, role_auth
+from src.apps.manage.models import User, Authority, UserRoleRel, RoleAuthRel
 from src.apps.manage.repository import UserRepository
 from src.common.constant import Constant
 from src.utils import DateUtil
@@ -47,9 +47,9 @@ class AuthServiceImpl(AuthService):
 
         stmt = select(distinct(Authority.code)) \
             .select_from(Authority) \
-            .join(role_auth, Authority.id == role_auth.c.auth_id) \
-            .join(user_role, user_role.c.role_id == role_auth.c.role_id) \
-            .join(User, User.id == user_role.c.user_id).where(User.email == email)
+            .join(RoleAuthRel, Authority.id == RoleAuthRel.auth_id) \
+            .join(UserRoleRel, UserRoleRel.role_id == RoleAuthRel.role_id) \
+            .join(User, User.id == UserRoleRel.user_id).where(User.email == email)
         result: Result = self.repository.execute_query(stmt)
         authorities: Set[str] = {res[0] for res in result.fetchall()}
 

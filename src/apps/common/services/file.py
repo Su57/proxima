@@ -4,7 +4,7 @@ from abc import abstractmethod
 from datetime import date
 
 from werkzeug.datastructures import FileStorage
-from pydantic_sqlalchemy import sqlalchemy_to_pydantic
+
 from settings import settings
 from src.apps.common.models import File
 from src.apps.common.repository import FileRepository

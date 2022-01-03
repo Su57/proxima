@@ -9,7 +9,7 @@ from settings import settings
 from src.core.db.model import DeclarativeModel
 
 # 引入所有的模型类
-from src.apps.manage.models import User, Role, Authority, user_role, role_auth
+from src.apps.manage.models import User, Role, Authority, UserRoleRel, RoleAuthRel
 from src.apps.common.models import File
 
 # this is the Alembic Config object, which provides

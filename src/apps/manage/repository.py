@@ -4,7 +4,7 @@ from sqlalchemy import insert, or_, delete, update
 from sqlalchemy import select, func
 from sqlalchemy.engine import Result
 
-from src.apps.manage.models import User, Role, Authority, user_role, role_auth
+from src.apps.manage.models import User, Role, Authority, UserRoleRel, RoleAuthRel
 from src.core.repository import Repository
 
 
@@ -24,7 +24,7 @@ class UserRepository(Repository[User]):
             session.flush()
             if roles is not None and len(roles) > 0:
                 entities = [{"user_id": user.id, "role_id": role_id} for role_id in roles]
-                session.execute(insert(user_role), entities)
+                session.execute(insert(UserRoleRel), entities)
             # 保存用户
             session.commit()
 
@@ -38,11 +38,11 @@ class UserRepository(Repository[User]):
         """
         with self.session_context as session:
             # 先解除原有角色绑定
-            session.execute(delete(user_role).where(user_role.c.user_id == ident))
+            session.execute(delete(UserRoleRel).where(UserRoleRel.user_id == ident))
             # 再新增绑定
             if roles is not None and len(roles) > 0:
                 entities = [{"user_id": ident, "role_id": role_id} for role_id in roles]
-                session.execute(insert(user_role), entities)
+                session.execute(insert(UserRoleRel), entities)
             # 最后更新用户
             session.execute(update(User).where(User.id == ident).values(**data))
             # 提交事务
@@ -56,7 +56,7 @@ class UserRepository(Repository[User]):
         """
         with self.session_context as session:
             # 先解除所有角色关联
-            session.execute(delete(user_role).where(user_role.c.user_id == ident))
+            session.execute(delete(UserRoleRel).where(UserRoleRel.user_id == ident))
             # 再删除用户
             session.execute(delete(User).where(User.id == ident))
             session.commit()
@@ -99,7 +99,7 @@ class RoleRepository(Repository[Role]):
             # 保存角色的权限信息
             if authorities is not None and len(authorities) > 0:
                 entities = [{"role_id": role.id, "auth_id": auth} for auth in authorities]
-                session.execute(insert(role_auth), entities)
+                session.execute(insert(RoleAuthRel), entities)
             session.commit()
 
     def update_role(self, ident: int, data: Dict, authorities: Sequence[int] = None) -> None:
@@ -113,8 +113,8 @@ class RoleRepository(Repository[Role]):
         with self.session_context as session:
             # 删除所有权限绑定并重新绑定权限
             if authorities is not None:
-                session.execute(delete(role_auth).where(role_auth.c.role_id == ident))
-                session.execute(insert(role_auth), [{"role_id": ident, "auth_id": auth} for auth in authorities])
+                session.execute(delete(RoleAuthRel).where(RoleAuthRel.role_id == ident))
+                session.execute(insert(RoleAuthRel), [{"role_id": ident, "auth_id": auth} for auth in authorities])
             # 更新角色信息
             session.execute(update(Role).where(Role.id == ident).values(**data))
 
@@ -123,9 +123,9 @@ class RoleRepository(Repository[Role]):
     def delete_role(self, ident) -> None:
         with self.session_context as session:
             # 删除所有权限关联
-            session.execute(delete(role_auth).where(role_auth.c.role_id == ident))
+            session.execute(delete(RoleAuthRel).where(RoleAuthRel.role_id == ident))
             # 删除所有用户关联
-            session.execute(delete(user_role).where(user_role.c.role_id == ident))
+            session.execute(delete(UserRoleRel).where(UserRoleRel.role_id == ident))
             # 删除角色本体
             session.execute(delete(Role).where(Role.id == ident))
             session.commit()
@@ -137,7 +137,7 @@ class RoleRepository(Repository[Role]):
         :return:
         """
         with self.session_context as session:
-            count_stmt = select(func.count(user_role.c.user_id)).where(user_role.c.role_id == role_id)
+            count_stmt = select(func.count(UserRoleRel.user_id)).where(UserRoleRel.role_id == role_id)
             count: int = session.execute(count_stmt).scalar()
             return count
 
@@ -163,14 +163,14 @@ class AuthorityRepository(Repository[Authority]):
         :return:
         """
         with self.session_context as session:
-            stmt = select(role_auth.c.perm_id).where(role_auth.c.role_id == role_id)
+            stmt = select(RoleAuthRel.auth_id).where(RoleAuthRel.role_id == role_id)
             res: Result = session.execute(stmt)
             return res.scalars().all()
 
     def get_role_count_by_authority(self, ident) -> int:
         with self.session_context as session:
             # 检测是否有用户依赖该角色
-            count_stmt = select(func.count(role_auth.c.role_id)).where(role_auth.c.auth_id == ident)
+            count_stmt = select(func.count(RoleAuthRel.role_id)).where(RoleAuthRel.auth_id == ident)
             count: int = session.execute(count_stmt).scalar()
             return count
 

@@ -21,7 +21,7 @@ class AuthorityService(IService):
         raise NotImplemented
 
     @abstractmethod
-    def get_authorities_by_role(self, ident: int) -> List[int]:
+    def get_authorities_by_role_id(self, ident: int) -> List[int]:
         """
         获取某角色所有的权限id
         :param ident: 角色id
@@ -44,7 +44,7 @@ class AuthorityServiceImpl(ServiceImpl[AuthorityRepository, Authority], Authorit
     def build_authority_tree(self, authorities: List[Authority]) -> List[Dict[str, str]]:
         return TreeUtil.build_tree([TreeSchema.from_orm(authority) for authority in authorities])
 
-    def get_authorities_by_role(self, ident: int) -> List[int]:
+    def get_authorities_by_role_id(self, ident: int) -> List[int]:
         return self.repository.get_authorities_by_role(ident)
 
     def delete_authority(self, ident: int) -> None:

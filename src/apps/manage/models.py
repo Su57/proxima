@@ -1,33 +1,31 @@
-from sqlalchemy import Table, Column, String, Integer, BigInteger, SmallInteger, ForeignKey, PrimaryKeyConstraint
+from sqlalchemy import Column, String, Integer, BigInteger, SmallInteger, ForeignKey, UniqueConstraint
 
 from src.utils import DateUtil
 from src.common.enums import Status, Gender
 from src.core.db.model import DeclarativeModel
 
 
-# 用户-角色关系表
-user_role = Table(
-    "user_role_rel",
-    DeclarativeModel.metadata,
-    Column("user_id", BigInteger, index=True, nullable=False, comment="用户id"),
-    Column("role_id", BigInteger, index=True, nullable=False, comment="角色id"),
-    PrimaryKeyConstraint("user_id", "role_id", name="pk_user_role")
-)
+class UserRoleRel(DeclarativeModel):
+    """ 用户-角色 关联表 """
+    __tablename__ = "user_role_rel"
+    user_id = Column("user_id", BigInteger, index=True, nullable=False, comment="用户id")
+    role_id = Column("role_id", BigInteger, index=True, nullable=False, comment="角色id")
 
-# 角色-权限关系表
-role_auth = Table(
-    "role_auth_rel",
-    DeclarativeModel.metadata,
-    Column("role_id", BigInteger, index=True, nullable=False, comment="角色id"),
-    Column("auth_id", BigInteger, index=True, nullable=False, comment="权限id"),
-    PrimaryKeyConstraint("role_id", "auth_id", name="pk_role_auth")
-)
+    __table_args__ = (UniqueConstraint('user_id', 'role_id', name='uq_user_role_id'),)
+
+
+class RoleAuthRel(DeclarativeModel):
+    """ 角色-权限 关联表 """
+    __tablename__ = "role_auth_rel"
+    role_id = Column("role_id", BigInteger, index=True, nullable=False, comment="角色id")
+    auth_id = Column("auth_id", BigInteger, index=True, nullable=False, comment="权限id")
+
+    __table_args__ = (UniqueConstraint('role_id', 'auth_id', name='uq_role_auth_id'),)
 
 
 class User(DeclarativeModel):
     """ 系统用户表 """
     __tablename__ = "user"
-    id = Column("id", BigInteger, autoincrement=True, primary_key=True, comment="主键")
     username = Column(String(50), nullable=False, comment="用户名")
     nickname = Column(String(50), nullable=False, default="", comment="昵称")
     email = Column(String(120), unique=True, nullable=False, index=True, comment="邮箱")
@@ -44,7 +42,6 @@ class User(DeclarativeModel):
 class Role(DeclarativeModel):
     """ 系统角色 """
     __tablename__ = "role"
-    id = Column("id", BigInteger, autoincrement=True, primary_key=True, comment="主键")
     name = Column(String(50), nullable=False, comment="角色名称")
     status = Column(SmallInteger, nullable=False, default=Status.enable.value, comment="角色状态，0正常，1停用")
     remark = Column(String(50), nullable=False, default="", comment="备注")
@@ -56,7 +53,6 @@ class Authority(DeclarativeModel):
     """ 菜单 / 权限 """
     __tablename__ = "authority"
 
-    id = Column("id", BigInteger, autoincrement=True, primary_key=True, comment="主键")
     name = Column(String(50), nullable=False, comment="名称")
     parent_id = Column(BigInteger, ForeignKey('authority.id'), index=True, comment='父权限id')
     sort = Column(Integer, default=0, nullable=False, comment="显示顺序")
@@ -70,6 +66,6 @@ __all__ = {
     "User",
     "Role",
     "Authority",
-    "user_role",
-    "role_auth"
+    "UserRoleRel",
+    "RoleAuthRel"
 }
