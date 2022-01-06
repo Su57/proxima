@@ -6,7 +6,7 @@ from src.apps.manage.models import User
 from src.apps.manage.schemas import UserCreateSchema, UserUpdateSchema, UserViewSchema
 from src.apps.manage.services import UserService
 from src.common.constant import Constant
-# from src.core.security import login_required
+from src.core.security import login_required
 from src.core.web.response import Response
 from src.core.web.schemas import Page
 from src.utils import RequestUtil
@@ -16,7 +16,7 @@ bp = Blueprint("user", __name__, url_prefix="/user")
 
 @bp.get("/page")
 @inject
-# @login_required
+@login_required
 def page(service: UserService = Provide[Container.user_service]) -> Response[Page[UserViewSchema]]:
     """ 获取用户分页列表 """
     current: int = RequestUtil.parse_int_arg("current", default=Constant.CURRENT_PAGE)
@@ -27,7 +27,7 @@ def page(service: UserService = Provide[Container.user_service]) -> Response[Pag
 
 @bp.get("/info/<int:ident>")
 @inject
-# @login_required
+@login_required
 def info(ident: int, service: UserService = Provide[Container.user_service]) -> Response[UserViewSchema]:
     user: User = service.get_by_id(ident)
     return Response.ok(data=UserViewSchema.from_orm(user))
@@ -35,7 +35,7 @@ def info(ident: int, service: UserService = Provide[Container.user_service]) -> 
 
 @bp.post("/add")
 @inject
-# @login_required
+@login_required
 def add(service: UserService = Provide[Container.user_service]) -> Response[str]:
     schema: UserCreateSchema = UserCreateSchema(**request.json)
     service.add_user(schema)
@@ -44,7 +44,7 @@ def add(service: UserService = Provide[Container.user_service]) -> Response[str]
 
 @bp.post("/update/<int:ident>")
 @inject
-# @login_required
+@login_required
 def update(ident: int, service: UserService = Provide[Container.user_service]) -> Response[str]:
     # schema = service.validate_data(request.json, UserUpdateSchema)
     schema: UserUpdateSchema = UserUpdateSchema(**request.json)
@@ -54,7 +54,7 @@ def update(ident: int, service: UserService = Provide[Container.user_service]) -
 
 @bp.delete("/delete/<int:ident>")
 @inject
-# @login_required
+@login_required
 def delete(ident: int, service: UserService = Provide[Container.user_service]) -> Response[str]:
     service.delete_user(ident)
     return Response.ok(msg="用户删除成功")

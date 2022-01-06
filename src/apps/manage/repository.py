@@ -175,8 +175,20 @@ class AuthorityRepository(Repository[Authority]):
             return count
 
 
+class UserRoleRelRepository(Repository[UserRoleRel]):
+    """ 用户-角色关联对象repo """
+    entity_class = UserRoleRel
+
+
+class RoleAuthRelRepository(Repository[RoleAuthRel]):
+    """ 角色-权限关联对象repo """
+    entity_class = RoleAuthRel
+
+
 __all__ = [
     "UserRepository",
     "RoleRepository",
-    "AuthorityRepository"
+    "AuthorityRepository",
+    "UserRoleRelRepository",
+    "RoleAuthRelRepository"
 ]

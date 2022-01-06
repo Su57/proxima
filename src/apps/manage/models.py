@@ -62,10 +62,10 @@ class Authority(DeclarativeModel):
     updated = Column("updated", BigInteger, nullable=True, onupdate=DateUtil.timestamp, comment="更新时间(时间戳，精确到秒)")
 
 
-__all__ = {
+__all__ = [
     "User",
     "Role",
     "Authority",
     "UserRoleRel",
     "RoleAuthRel"
-}
+]

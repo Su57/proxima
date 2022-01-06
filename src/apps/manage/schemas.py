@@ -107,3 +107,12 @@ class UserRoleSchema(BaseValidationSchema):
 
 
 AuthorityViewSchema.update_forward_refs()
+
+__all__ = [
+    "UserModelSchema", "RoleModelSchema", "AuthorityModelSchema",
+    "UserViewSchema", "RoleViewSchema", "AuthorityViewSchema",
+    "UserCreateSchema", "UserUpdateSchema",
+    "RoleCreateSchema", "RoleUpdateSchema",
+    "AuthorityCreateSchema", "AuthorityUpdateSchema",
+    "UserRoleSchema"
+]

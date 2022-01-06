@@ -12,3 +12,6 @@ class File(DeclarativeModel):
     filename = Column("filename", String(64), nullable=False, comment="文件名")
     content_type = Column("content_type", String(32), comment="文件类型")
     upload_time = Column("upload_time", BigInteger, comment="上传日期")
+
+
+__all__ = ["File"]

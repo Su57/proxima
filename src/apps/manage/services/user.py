@@ -86,6 +86,7 @@ class UserServiceImpl(ServiceImpl[UserRepository, User], UserService):
         user.mobile = schema.mobile
         user.avatar = schema.avatar
         user.password = SecurityUtil.generate_password(schema.password)
+        self.repository.save(user)
         self.repository.add_user(user, schema.roles)
 
     def update_user(self, ident: int, schema: UserUpdateSchema) -> None:
