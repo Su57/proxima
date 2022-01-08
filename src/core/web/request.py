@@ -19,12 +19,17 @@ from src.exceptions import UnAuthorizedException, TokenExpiredException
 @inject
 def load_user(redis: Redis = Provide[Container.redis]) -> Optional[CurrentUser]:
     """
-    加载当前请求的用户
+    根据token解析出的redis键，加载对应的redis用户数据，并设置为request.user。
+    若request.user已经有对应的值，则直接返回值即可
 
     :param redis: redis客户端
-    :return: 用户对象
+    :return: CurrentUser 对象
     """
     if has_request_context():
+        # 先判断是否已经加载到request中，否则可能会多次进行token解析和redis查询
+        user = getattr(request, "user", None)
+        if user is not None and isinstance(user, CurrentUser):
+            return user
         # 从header中获取token
         token: str = request.headers.get("Authorization", None)
         # token存在时，进入token校验程序 -> 要么解析出用户，要么抛出特定异常
@@ -47,4 +52,4 @@ def load_user(redis: Redis = Provide[Container.redis]) -> Optional[CurrentUser]:
                 raise UnAuthorizedException
 
 
-current_user = LocalProxy(lambda: load_user())
+current_user: "CurrentUser" = LocalProxy(load_user)  # type: ignore

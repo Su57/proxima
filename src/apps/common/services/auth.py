@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 from datetime import timedelta
-from typing import Set, Optional, Final
+from typing import Set, Optional, Final, NoReturn
 
 from redis import Redis
 from sqlalchemy.engine import Result
@@ -12,10 +12,10 @@ from src.apps.common.schemas import BearerToken
 from src.apps.manage.models import User, Authority, UserRoleRel, RoleAuthRel
 from src.apps.manage.repository import UserRepository
 from src.common.constant import Constant
-from src.utils import DateUtil
 from src.core.web.schemas import CurrentUser
 from src.exceptions import ProximaException, InvalidAccountException
-from src.utils import StringUtil, SecurityUtil
+from src.utils import DateUtil
+from src.utils import SecurityUtil
 
 
 class AuthService(ABC):
@@ -30,10 +30,19 @@ class AuthService(ABC):
         """
         raise NotImplemented
 
+    @abstractmethod
+    def logout(self, user_id) -> NoReturn:
+        """
+        登出用户
+        :param user_id: 用户id
+        :return:
+        """
+        raise NotImplemented
+
 
 class AuthServiceImpl(AuthService):
 
-    def __init__(self, redis: Redis, repository: UserRepository) -> None:
+    def __init__(self, redis: Redis, repository: UserRepository) -> NoReturn:
         self.redis: Final[Redis] = redis
         self.repository: Final[UserRepository] = repository
 
@@ -63,9 +72,16 @@ class AuthServiceImpl(AuthService):
             authorities=authorities,
             is_super=is_super
         )
-        uid: str = StringUtil.get_unique_key()
+        uid: str = str(user.id)
         expire: timedelta = timedelta(minutes=settings.TOKEN_EXPIRED_MINUTES)
+        # 使用主键作为redis键，则每次登录就会覆盖之前的值(存在的话)
         self.redis.set(name=Constant.AUTH_REDIS_KEY + uid, value=current_user.json(), ex=expire)
         token: str = SecurityUtil.create_token(subject=uid)
         expired_at: int = DateUtil.timestamp() + expire.seconds
         return BearerToken(access_token=token, token_type=Constant.TOKEN_SCHEMA, expired_at=expired_at)
+
+    def logout(self, user_id) -> NoReturn:
+        redis_key: str = Constant.AUTH_REDIS_KEY + str(user_id)
+        if self.redis.exists(redis_key):
+            self.redis.delete(redis_key)
+
