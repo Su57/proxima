@@ -11,7 +11,7 @@ from settings import settings
 from src.apps.common.repository import FileRepository
 from src.apps.common.services import LocalFileService
 from src.core.web.schemas import CurrentUser
-from test.api_test.base import AppContextMixin
+from tests.api_test.base import AppContextMixin
 
 
 class CommonApiTestCase(AppContextMixin, TestCase):

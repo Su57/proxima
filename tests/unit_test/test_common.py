@@ -1,12 +1,15 @@
 from unittest import TestCase, main
 from unittest.mock import Mock, MagicMock, patch, ANY
-from src.core.db.session import SessionContext
+
 from src.apps.common.models import File
 from src.apps.common.repository import FileRepository
 from src.apps.common.services.auth import AuthServiceImpl
+from src.apps.common.services.auth import Redis
 from src.apps.common.services.file import LocalFileService, FileStorage
 from src.apps.manage.models import User
 from src.apps.manage.repository import UserRepository
+from src.common.constant import Constant
+from src.core.db.session import SessionContext
 from src.exceptions import ProximaException, InvalidAccountException
 
 
@@ -105,6 +108,30 @@ class AuthServiceTestCase(TestCase):
         # 没有该用户时抛出异常
         repository.get_user_by_email.return_value = None
         self.assertRaises(ProximaException, service.authenticate, 'not_really_exists_email', ANY)
+
+    def test_logout(self):
+        mock_redis = Mock(spec=Redis)
+        service = AuthServiceImpl(redis=mock_redis, repository=Mock())
+        user_id = 1
+        redis_key = Constant.AUTH_REDIS_KEY + str(user_id)
+
+        mock_redis.exists.return_value = True
+        service.logout(user_id)
+        mock_redis.exists.assert_called_once_with(redis_key)
+        mock_redis.delete.assert_called_once_with(redis_key)
+        self.assertEqual(mock_redis.exists.call_count, 1)
+
+    def test_logout_not_exists(self):
+        mock_redis = Mock(spec=Redis)
+        service = AuthServiceImpl(redis=mock_redis, repository=Mock())
+        user_id = 1
+        redis_key = Constant.AUTH_REDIS_KEY + str(user_id)
+
+        mock_redis.exists.return_value = False
+        service.logout(user_id)
+        mock_redis.exists.assert_called_once_with(redis_key)
+        mock_redis.delete.assert_not_called()
+        self.assertEqual(mock_redis.exists.call_count, 1)
 
 
 if __name__ == '__main__':

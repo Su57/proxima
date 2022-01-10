@@ -7,7 +7,7 @@ from src.core.db.session import SessionContext
 from src.core.event import Event, EventListener
 
 
-class UserSaveRoleObserver(EventListener):
+class UserSaveListener(EventListener):
 
     def __init__(self, session_context: SessionContext):
         self.session_context: Final[SessionContext] = session_context

@@ -12,7 +12,7 @@ class UserRepository(Repository[User]):
 
     entity_class = Final[User]
 
-    def add_user(self, user: User, roles: Sequence[int] = None) -> None:
+    def add_user(self, user: User, roles: Sequence[int] = None) -> int:
         """
         添加用户
         :param user: 待添加实体
@@ -27,6 +27,7 @@ class UserRepository(Repository[User]):
                 session.execute(insert(UserRoleRel), entities)
             # 保存用户
             session.commit()
+            return user.id
 
     def update_user(self, ident: int, data: Dict, roles: Sequence[int] = None) -> None:
         """
@@ -86,7 +87,7 @@ class UserRepository(Repository[User]):
 class RoleRepository(Repository[Role]):
     entity_class = Final[Role]
 
-    def add_role(self, role: Role, authorities: Sequence[int] = None) -> None:
+    def add_role(self, role: Role, authorities: Sequence[int] = None) -> int:
         """
         添加角色信息
         :param role: 角色对象
@@ -101,6 +102,7 @@ class RoleRepository(Repository[Role]):
                 entities = [{"role_id": role.id, "auth_id": auth} for auth in authorities]
                 session.execute(insert(RoleAuthRel), entities)
             session.commit()
+            return role.id
 
     def update_role(self, ident: int, data: Dict, authorities: Sequence[int] = None) -> None:
         """
